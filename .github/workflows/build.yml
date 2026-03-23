@@ -1,0 +1,30 @@
+name: Build Noir Notes
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: windows-2019
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Add msbuild to PATH
+      uses: microsoft/setup-msbuild@v1.1
+
+    - name: Install NuGet
+      uses: NuGet/setup-nuget@v1
+
+    - name: Restore NuGet packages
+      run: nuget restore NoirNotes.csproj
+
+    - name: Build
+      run: msbuild NoirNotes.csproj /p:Configuration=Release
+
+    - name: Upload app
+      uses: actions/upload-artifact@v3
+      with:
+        name: NoirNotes-App
+        path: bin\Release\NoirNotes.exe
